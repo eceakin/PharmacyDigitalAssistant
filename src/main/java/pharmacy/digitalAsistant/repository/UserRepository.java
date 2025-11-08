@@ -1,9 +1,10 @@
 package pharmacy.digitalAsistant.repository;
 
 
-import org.apache.catalina.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import pharmacy.digitalAsistant.domain.entity.User;
 
 import java.util.Optional;
 
