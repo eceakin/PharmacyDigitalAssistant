@@ -1,14 +1,54 @@
 package pharmacy.digitalAsistant.service.abstracts;
 
+import pharmacy.digitalAsistant.dto.request.PatientRequest;
+import pharmacy.digitalAsistant.dto.response.PatientResponse;
+
 import java.util.List;
 
-import pharmacy.digitalAsistant.dto.request.PatientRequestDTO;
-import pharmacy.digitalAsistant.dto.response.PatientResponseDTO;
-
 public interface PatientService {
-    PatientResponseDTO register(PatientRequestDTO dto);
-    PatientResponseDTO getById(Long id);
-    List<PatientResponseDTO> search(String query);
-    List<PatientResponseDTO> getAll();
-    void delete(Long id);
+
+    /**
+     * Create a new patient
+     */
+    PatientResponse createPatient(PatientRequest request);
+
+    /**
+     * Update an existing patient
+     */
+    PatientResponse updatePatient(Long id, PatientRequest request);
+
+    /**
+     * Get patient by ID
+     */
+    PatientResponse getPatientById(Long id);
+
+    /**
+     * Get all patients
+     */
+    List<PatientResponse> getAllPatients();
+
+    /**
+     * Delete patient by ID
+     */
+    void deletePatient(Long id);
+
+    /**
+     * Search patients by keyword (name or TC Kimlik)
+     */
+    List<PatientResponse> searchPatients(String keyword);
+
+    /**
+     * Get patients with chronic diseases
+     */
+    List<PatientResponse> getPatientsWithChronicDiseases();
+
+    /**
+     * Get patients with active prescriptions
+     */
+    List<PatientResponse> getPatientsWithActivePrescriptions();
+
+    /**
+     * Check if TC Kimlik already exists
+     */
+    boolean existsByTcKimlik(String tcKimlikNo);
 }

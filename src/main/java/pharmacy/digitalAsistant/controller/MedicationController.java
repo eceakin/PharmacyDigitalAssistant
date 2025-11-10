@@ -1,41 +1,62 @@
 package pharmacy.digitalAsistant.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import pharmacy.digitalAsistant.dto.request.MedicationRequestDTO;
-import pharmacy.digitalAsistant.dto.response.MedicationResponseDTO;
-import pharmacy.digitalAsistant.service.abstracts.MedicationService;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pharmacy.digitalAsistant.dto.request.MedicationRequest;
+import pharmacy.digitalAsistant.dto.response.MedicationResponse;
+import pharmacy.digitalAsistant.service.abstracts.MedicationService;
+import pharmacy.digitalAsistant.util.ResponseUtil;
 
-import jakarta.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/api/medications")
-@CrossOrigin
+@RequiredArgsConstructor
 public class MedicationController {
 
     private final MedicationService medicationService;
 
     @PostMapping
-    public ResponseEntity<MedicationResponseDTO> create(@Valid @RequestBody MedicationRequestDTO dto) {
-        return ResponseEntity.ok(medicationService.create(dto));
+    public ResponseEntity<?> createMedication(@Valid @RequestBody MedicationRequest request) {
+        MedicationResponse response = medicationService.createMedication(request);
+        return ResponseUtil.created(response, "İlaç başarıyla oluşturuldu");
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateMedication(@PathVariable Long id, @Valid @RequestBody MedicationRequest request) {
+        MedicationResponse response = medicationService.updateMedication(id, request);
+        return ResponseUtil.success(response, "İlaç başarıyla güncellendi");
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<MedicationResponseDTO> get(@PathVariable Long id) {
-        return ResponseEntity.ok(medicationService.getById(id));
+    public ResponseEntity<?> getMedicationById(@PathVariable Long id) {
+        MedicationResponse response = medicationService.getMedicationById(id);
+        return ResponseUtil.success(response);
     }
 
     @GetMapping
-    public ResponseEntity<List<MedicationResponseDTO>> getAll() {
-        return ResponseEntity.ok(medicationService.getAll());
+    public ResponseEntity<?> getAllMedications() {
+        List<MedicationResponse> responses = medicationService.getAllMedications();
+        return ResponseUtil.success(responses);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteMedication(@PathVariable Long id) {
+        medicationService.deleteMedication(id);
+        return ResponseUtil.success("İlaç başarıyla silindi");
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<MedicationResponseDTO>> search(@RequestParam String q) {
-        return ResponseEntity.ok(medicationService.search(q));
+    public ResponseEntity<?> searchMedications(@RequestParam String q) {
+        List<MedicationResponse> responses = medicationService.searchMedications(q);
+        return ResponseUtil.success(responses);
+    }
+
+    @GetMapping("/check-barcode")
+    public ResponseEntity<?> checkBarcode(@RequestParam String barcode) {
+        boolean exists = medicationService.existsByBarcode(barcode);
+        return ResponseUtil.success(exists);
     }
 }

@@ -1,37 +1,58 @@
 package pharmacy.digitalAsistant.controller;
 
 import lombok.RequiredArgsConstructor;
-import pharmacy.digitalAsistant.dto.request.NotificationRequestDTO;
-import pharmacy.digitalAsistant.dto.response.NotificationResponseDTO;
-import pharmacy.digitalAsistant.service.abstracts.NotificationService;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pharmacy.digitalAsistant.dto.response.NotificationResponse;
+import pharmacy.digitalAsistant.service.abstracts.NotificationService;
+import pharmacy.digitalAsistant.util.ResponseUtil;
 
-import jakarta.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/api/notifications")
-@CrossOrigin
+@RequiredArgsConstructor
 public class NotificationController {
 
     private final NotificationService notificationService;
 
-    @PostMapping
-    public ResponseEntity<NotificationResponseDTO> create(@Valid @RequestBody NotificationRequestDTO dto) {
-        return ResponseEntity.ok(notificationService.create(dto));
+    @GetMapping
+    public ResponseEntity<?> getAllNotifications() {
+        List<NotificationResponse> responses = notificationService.getAllNotifications();
+        return ResponseUtil.success(responses);
     }
 
-    @GetMapping("/pending")
-    public ResponseEntity<List<NotificationResponseDTO>> pending() {
-        return ResponseEntity.ok(notificationService.getPendingToSend());
+    @GetMapping("/patient/{patientId}")
+    public ResponseEntity<?> getPatientNotifications(@PathVariable Long patientId) {
+        List<NotificationResponse> responses = notificationService.getPatientNotifications(patientId);
+        return ResponseUtil.success(responses);
     }
 
-    @PutMapping("/{id}/sent")
-    public ResponseEntity<Void> markSent(@PathVariable Long id) {
-        notificationService.markAsSent(id);
-        return ResponseEntity.noContent().build();
+    @GetMapping("/failed")
+    public ResponseEntity<?> getFailedNotifications() {
+        List<NotificationResponse> responses = notificationService.getFailedNotifications();
+        return ResponseUtil.success(responses);
+    }
+
+    @PostMapping("/send-medication-reminders")
+    public ResponseEntity<?> sendMedicationReminders() {
+        notificationService.sendMedicationReminders();
+        return ResponseUtil.success("İlaç hatırlatmaları gönderildi");
+    }
+
+    @PostMapping("/send-prescription-warnings")
+    public ResponseEntity<?> sendPrescriptionWarnings() {
+        notificationService.sendPrescriptionExpiryWarnings();
+        return ResponseUtil.success("Reçete uyarıları gönderildi");
+    }
+
+    @GetMapping("/stats")
+    public ResponseEntity<?> getNotificationStats() {
+        Map<String, Long> stats = Map.of(
+                "sent", notificationService.countSentNotifications(),
+                "failed", notificationService.countFailedNotifications()
+        );
+        return ResponseUtil.success(stats);
     }
 }

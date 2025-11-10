@@ -1,12 +1,15 @@
 package pharmacy.digitalAsistant.service.abstracts;
 
+
+import pharmacy.digitalAsistant.dto.response.NotificationResponse;
 import java.util.List;
 
-import pharmacy.digitalAsistant.dto.request.NotificationRequestDTO;
-import pharmacy.digitalAsistant.dto.response.NotificationResponseDTO;
-
 public interface NotificationService {
-    NotificationResponseDTO create(NotificationRequestDTO dto);
-    List<NotificationResponseDTO> getPendingToSend();
-    void markAsSent(Long id);
+    List<NotificationResponse> getAllNotifications();
+    List<NotificationResponse> getPatientNotifications(Long patientId);
+    List<NotificationResponse> getFailedNotifications();
+    void sendMedicationReminders();
+    void sendPrescriptionExpiryWarnings();
+    long countSentNotifications();
+    long countFailedNotifications();
 }

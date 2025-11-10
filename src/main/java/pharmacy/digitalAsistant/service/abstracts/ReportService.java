@@ -1,5 +1,9 @@
 package pharmacy.digitalAsistant.service.abstracts;
 
-public interface ReportService {
+import pharmacy.digitalAsistant.dto.response.ReportResponse;
 
+public interface ReportService {
+    ReportResponse generateDashboardReport();
+    ReportResponse generateInventoryReport();
+    ReportResponse generateNotificationReport();
 }

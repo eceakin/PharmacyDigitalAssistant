@@ -1,12 +1,16 @@
 package pharmacy.digitalAsistant.service.abstracts;
 
+
+import pharmacy.digitalAsistant.dto.request.PrescriptionRequest;
+import pharmacy.digitalAsistant.dto.response.PrescriptionResponse;
 import java.util.List;
 
-import pharmacy.digitalAsistant.dto.request.PrescriptionRequestDTO;
-import pharmacy.digitalAsistant.dto.response.PrescriptionResponseDTO;
-
 public interface PrescriptionService {
-    PrescriptionResponseDTO create(PrescriptionRequestDTO dto);
-    PrescriptionResponseDTO get(Long id);
-    List<PrescriptionResponseDTO> getByPatient(Long patientId);
+    PrescriptionResponse createPrescription(PrescriptionRequest request);
+    PrescriptionResponse updatePrescription(Long id, PrescriptionRequest request);
+    PrescriptionResponse getPrescriptionById(Long id);
+    List<PrescriptionResponse> getAllPrescriptions();
+    List<PrescriptionResponse> getPatientPrescriptions(Long patientId);
+    List<PrescriptionResponse> getExpiringPrescriptions(int days);
+    void deactivatePrescription(Long id);
 }

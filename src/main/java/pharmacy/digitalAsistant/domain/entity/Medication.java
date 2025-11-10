@@ -1,40 +1,46 @@
 package pharmacy.digitalAsistant.domain.entity;
 
-
-import lombok.*;
-
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "medications")
+@Table(name = "medications", indexes = {
+    @Index(name = "idx_barcode", columnList = "barcode"),
+    @Index(name = "idx_medication_name", columnList = "name")
+})
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Medication extends BaseEntity {
 
-    @NotBlank
+    @Column(name = "name", nullable = false, length = 200)
     private String name;
 
-    private String genericName;
+    @Column(name = "barcode", unique = true, length = 50)
+    private String barcode;
 
-    private String manufacturer;
+    @Column(name = "serial_number", length = 100)
+    private String serialNumber;
 
-    private String form; // e.g., tablet, syrup
-
-    private String strength; // e.g., "500 mg"
-
-    @Column(columnDefinition = "text")
+    @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
-    // prescriptions - many-to-many via PrescriptionMedication
-    @OneToMany(mappedBy = "medication", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PrescriptionMedication> prescriptionMedications;
+    @Column(name = "active_ingredient", length = 200)
+    private String activeIngredient;
 
-    // inventories referencing this medication (one medication can have multiple inventory lots)
+    @Column(name = "manufacturer", length = 100)
+    private String manufacturer;
+
     @OneToMany(mappedBy = "medication", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Inventory> inventories;
+    private List<Inventory> inventoryList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "medication", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PrescriptionMedication> prescriptionMedications = new ArrayList<>();
 }
